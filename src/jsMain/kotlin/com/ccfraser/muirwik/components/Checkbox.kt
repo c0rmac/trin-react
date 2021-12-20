@@ -10,6 +10,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Checkbox")
+@JsNonModule
 private external val checkboxModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

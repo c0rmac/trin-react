@@ -13,6 +13,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Menu")
+@JsNonModule
 private external val menuModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

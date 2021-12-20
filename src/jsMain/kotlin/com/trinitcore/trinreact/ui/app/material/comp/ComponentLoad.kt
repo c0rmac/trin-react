@@ -6,7 +6,7 @@ import com.trinitcore.trinreact.ui.trinreact.TState
 import react.RBuilder
 import react.RHandler
 
-class ComponentLoad : TComponent<ComponentLoad.Props, TState>() {
+class ComponentLoad(props: Props) : TComponent<ComponentLoad.Props, TState>(props) {
 
     interface Props : TProps {
         var loadBlock: suspend () -> Unit

@@ -10,7 +10,8 @@ interface GalleryProps : StyledProps {
     var photos: Array<Photo>
 }
 
-@JsModule("react-photo-gallery") private external val reactPhotoGalleryModule: dynamic
+@JsModule("react-photo-gallery") @JsNonModule
+private external val reactPhotoGalleryModule: dynamic
 @Suppress("UnsafeCastFromDynamic") private val reactPhotoGalleryComponent: RComponent<GalleryProps, RState> = reactPhotoGalleryModule.default
 
 fun RBuilder.gallery(photos: Array<Photo>) = createStyled(reactPhotoGalleryComponent) {

@@ -10,6 +10,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Button")
+@JsNonModule
 private external val buttonModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")
@@ -23,6 +24,7 @@ interface MButtonProps : MButtonBaseProps {
     var fullWidth: Boolean
     var href: String
     var startIcon: ReactElement
+    var type: String
 }
 //var MButtonProps.color by EnumPropToStringNullable(MColor.values())
 var MButtonProps.color by EnumPropToString(MColor.values())

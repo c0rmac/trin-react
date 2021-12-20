@@ -5,8 +5,8 @@ import react.RComponent
 import react.RState
 import styled.StyledHandler
 
-
 @JsModule("@material-ui/core/AppBar")
+@JsNonModule
 private external val iconModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

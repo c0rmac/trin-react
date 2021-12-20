@@ -10,6 +10,7 @@ import react.RState
 import styled.StyledHandler
 
 @JsModule("@material-ui/core/ExpansionPanel")
+@JsNonModule
 private external val expansionPanelModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

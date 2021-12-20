@@ -22,7 +22,7 @@ class AppIcon : TLocalisedComponent<AppIcon.Props, TState, AppIcon.Localisation>
     override val localisation: KClass<Localisation>
         get() = Localisation::class
 
-    interface Props : RProps {
+    interface Props : TProps {
         var color: Color
         var size: Size
     }

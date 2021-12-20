@@ -13,7 +13,8 @@ interface ReactAnimationHeightProps : StyledProps {
     var duration: Int
 }
 
-@JsModule("react-animate-height") private external val reactAnimateHeightModule: dynamic
+@JsModule("react-animate-height") @JsNonModule
+private external val reactAnimateHeightModule: dynamic
 @Suppress("UnsafeCastFromDynamic") private val reactAnimateHeightComponent: RComponent<ReactAnimationHeightProps, RState> = reactAnimateHeightModule.default
 /** React Animate Height */
 fun RBuilder.animateHeight(

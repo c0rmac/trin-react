@@ -9,6 +9,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/Icon")
+@JsNonModule
 private external val iconModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

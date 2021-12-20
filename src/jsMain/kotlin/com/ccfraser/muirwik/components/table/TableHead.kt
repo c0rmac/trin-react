@@ -10,6 +10,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/TableHead")
+@JsNonModule
 private external val tableHeadModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

@@ -10,6 +10,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/TableBody")
+@JsNonModule
 private external val tableBodyModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

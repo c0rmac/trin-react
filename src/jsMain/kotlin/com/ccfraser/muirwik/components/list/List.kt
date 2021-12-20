@@ -12,6 +12,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/List")
+@JsNonModule
 private external val listModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

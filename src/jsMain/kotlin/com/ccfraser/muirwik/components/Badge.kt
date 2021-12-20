@@ -8,6 +8,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Badge")
+@JsNonModule
 private external val badgeModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

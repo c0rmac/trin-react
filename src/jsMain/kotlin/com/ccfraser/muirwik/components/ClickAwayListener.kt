@@ -8,6 +8,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/ClickAwayListener")
+@JsNonModule
 private external val clickAwayListenerModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

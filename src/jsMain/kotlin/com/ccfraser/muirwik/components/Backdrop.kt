@@ -9,6 +9,7 @@ import styled.StyledHandler
 import styled.StyledProps
 
 @JsModule("@material-ui/core/Backdrop")
+@JsNonModule
 private external val backdropModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

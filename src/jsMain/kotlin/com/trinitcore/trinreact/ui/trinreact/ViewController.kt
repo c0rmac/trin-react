@@ -1,8 +1,8 @@
 package com.trinitcore.trinreact.ui.trinreact
 
 // import com.clickcostz.common.module.APP_NAME
+import com.trinitcore.trinreact.ui.Context
 import com.trinitcore.trinreact.ui.app.material.App
-import com.trinitcore.trinreact.ui.app.material.Context
 import com.trinitcore.trinreact.ui.wrapper.reactvisibilitysensor.vizSensor
 import kotlinx.css.*
 import react.*
@@ -13,8 +13,7 @@ import styled.styledDiv
 import styled.styledH3
 import kotlinx.browser.window
 
-interface ViewControllerProps : RProps {
-    var context: Context
+interface ViewControllerProps : TProps {
 }
 
 interface ViewControllerState : TState {
@@ -45,16 +44,17 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
     // TUS : DELEGATES
     /** Managed Controller's Delegate - Pre-transition animation between ViewControllers call. */
     open fun willChangeViewController(oldPathname: String, newPathName: String) {
-        if (managedController) if (!usingCustomToolbar) App.hideToolbarTitle()
+        if (managedController) if (!usingCustomToolbar) app.hideToolbarTitle()
     }
 
     /** Managed Controller's Delegate - Post transition animation between ViewControllers call. */
     open fun didChangeViewController() {
-        App.setPageTitle(pageTitle)
+        console.log("didChangeViewController")
+        app.setPageTitle(pageTitle)
         if (useToolbar) {
             showToolbar()
         } else {
-            App.hideToolbar()
+            app.hideToolbar()
         }
     }
 
@@ -87,8 +87,12 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
     lateinit var pathname: String
 
     /** App context */
-    val context: Context
-    get() = props.context
+    val appContext: Context
+    get() = props.appContext
+
+    /** App container */
+    val app: App
+    get() = props.app
 
     val history
     get() = (props as? RouteResultProps<*>?)?.history
@@ -114,8 +118,8 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
                 if (currentPathname != location.pathname) {
                     if (managedController) currentVisibleVCInstance?.willChangeViewController(oldPathname, newPathName)
                     if (currentVisibleVCInstance?.shouldHideBottomBar(oldPathname, newPathName) == true) {
-                        if (App.isBottomBarVisible) {
-                            App.hideBottomBar()
+                        if (app.isBottomBarVisible) {
+                            app.hideBottomBar()
                         }
                         currentPathname = location.pathname
                     }
@@ -129,12 +133,16 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
 
     override fun componentWillReceiveProps(nextProps: P) {
         if (this.managedController) {
+            console.log("componentWillReceiveProps", 1)
             if (shouldChangeParameters(nextProps)) {
+                console.log("componentWillReceiveProps", 2)
                 this.willChangeParameters(nextProps)
                 this.setState({ it }, {
+                    console.log("componentWillReceiveProps", 3)
                     this.didChangeParameters(nextProps)
                     window.setTimeout({
-                        if (!usingCustomToolbar) App.showToolbarTitle()
+                        console.log("componentWillReceiveProps", 4)
+                        if (!usingCustomToolbar) app.showToolbarTitle()
                     }, 200)
                 })
             }
@@ -152,7 +160,7 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
     // TUS : DEFAULT
     fun showDefaultToolbar() {
         buildElement {
-            App.useDefaultToolbar(defaultToolbarTitle, defaultNavBackPath, defaultToolbarLeftButton, defaultToolbarRightButton)
+            app.useDefaultToolbar(defaultToolbarTitle, defaultNavBackPath, defaultToolbarLeftButton, defaultToolbarRightButton)
         }
     }
 
@@ -187,14 +195,15 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
     var title: String? = text.title
         set(value){
             field = value
-            App.setPageTitle(pageTitle)
+            app.setPageTitle(pageTitle)
             //showToolbar()
         }
     // DEIREADH : ADJUSTER
 
     fun showToolbar() {
+        console.log("showToolbar")
         if (this@ViewController.toolbar != null) {
-            App.useToolbar(this@ViewController.toolbar!!)
+            app.useToolbar(this@ViewController.toolbar!!)
         } else {
             showDefaultToolbar()
         }
@@ -211,7 +220,7 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
 
     // TUS : RENDER
     val pageTitle: String
-    get() = title?.let { title -> if (pageTitleStartsWithAppName) "${context.appName} | $title" else "$title | ${context.appName}" } ?: context.appName
+    get() = title?.let { title -> if (pageTitleStartsWithAppName) "${appContext.appName} | $title" else "$title | ${appContext.appName}" } ?: appContext.appName
 
     open val pageTitleStartsWithAppName: Boolean = false
 
@@ -223,11 +232,11 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
                 * when App.setState is called, causing App.setState to be called again in the inner component and consequently creating an endless loop. The temporary solution
                 * to this issue is to define withOktaAuth wrapped ViewControllers as field in the App class as apposed to creating it in the route render scope. This may
                 * potentially be the solution though further investigation is needed. New conventions may need to be devised.  */
-                if (isVisible && managedController && currentVisibleVCInstance != this@ViewController) {
+                // if (isVisible && managedController && currentVisibleVCInstance != this@ViewController) {
                     // AA1
                     currentVisibleVCInstance = this@ViewController
                     didChangeViewController()
-                }
+                // }
             }
             innerRender()
         }

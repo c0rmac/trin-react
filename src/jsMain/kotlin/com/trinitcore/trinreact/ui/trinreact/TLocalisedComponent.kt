@@ -4,7 +4,7 @@ import react.RProps
 import kotlin.reflect.KClass
 
 
-abstract class TLocalisedComponent<P : RProps, S : TState, R : TComponentLocalisation> : TComponent<P, S> {
+abstract class TLocalisedComponent<P : TProps, S : TState, R : TComponentLocalisation> : TComponent<P, S> {
 
     constructor() : super()
 

@@ -15,7 +15,8 @@ import styled.StyledHandler
 import styled.css
 import styled.styledDiv
 
-class ConfirmationTextField : TComponent<ConfirmationTextField.Props, ConfirmationTextField.State>() {
+class ConfirmationTextField(props: Props) :
+    TComponent<ConfirmationTextField.Props, ConfirmationTextField.State>(props) {
 
     companion object {
         const val componentIdentifier = "com.trinitcore.trinreact.fundemental.app.material.comp.ConfirmationTextField"

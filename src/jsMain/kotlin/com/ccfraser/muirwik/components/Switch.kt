@@ -10,6 +10,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Switch")
+@JsNonModule
 private external val switchDefault: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

@@ -9,6 +9,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Zoom")
+@JsNonModule
 private external val zoomModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

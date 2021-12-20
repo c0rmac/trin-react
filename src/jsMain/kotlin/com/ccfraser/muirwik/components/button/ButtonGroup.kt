@@ -8,6 +8,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/ButtonGroup")
+@JsNonModule
 private external val buttonGroupModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

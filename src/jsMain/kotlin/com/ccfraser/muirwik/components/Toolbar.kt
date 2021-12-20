@@ -11,6 +11,7 @@ import styled.css
 
 
 @JsModule("@material-ui/core/Toolbar")
+@JsNonModule
 private external val toolbarModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

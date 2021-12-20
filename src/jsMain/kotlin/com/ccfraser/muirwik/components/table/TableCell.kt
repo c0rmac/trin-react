@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/TableCell")
+@JsNonModule
 private external val tableCellModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

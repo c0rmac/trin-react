@@ -8,7 +8,7 @@ import react.RBuilder
 import styled.css
 import styled.styledDiv
 
-class BottomBar : TComponent<BottomBar.Props, BottomBar.State>() {
+class BottomBar(props: Props) : TComponent<BottomBar.Props, BottomBar.State>(props) {
 
     companion object {
         const val componentIdentifier = "com.trinitcore.trinreact.fundemental.app.material.comp.BottomBar"

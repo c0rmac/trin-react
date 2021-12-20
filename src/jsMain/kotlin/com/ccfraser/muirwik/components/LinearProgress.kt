@@ -8,6 +8,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/LinearProgress")
+@JsNonModule
 private external val linearProgressModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

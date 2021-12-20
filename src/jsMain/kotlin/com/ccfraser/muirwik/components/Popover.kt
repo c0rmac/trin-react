@@ -13,6 +13,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Popover")
+@JsNonModule
 private external val popoverModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

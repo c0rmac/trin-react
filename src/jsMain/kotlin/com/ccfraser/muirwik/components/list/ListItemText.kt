@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/ListItemText")
+@JsNonModule
 private external val listItemTextModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

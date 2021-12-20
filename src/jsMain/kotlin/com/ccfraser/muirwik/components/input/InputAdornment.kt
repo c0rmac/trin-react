@@ -12,6 +12,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/InputAdornment")
+@JsNonModule
 private external val inputAdornmentDefault: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

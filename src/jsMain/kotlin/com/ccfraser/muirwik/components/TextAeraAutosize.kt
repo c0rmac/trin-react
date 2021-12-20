@@ -8,6 +8,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/TextareaAutosize")
+@JsNonModule
 private external val textAreaAutosizeDefault: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

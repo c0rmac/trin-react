@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/OutlinedInput")
+@JsNonModule
 private external val outlinedInputModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

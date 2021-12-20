@@ -9,6 +9,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/CardHeader")
+@JsNonModule
 private external val cardHeaderModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

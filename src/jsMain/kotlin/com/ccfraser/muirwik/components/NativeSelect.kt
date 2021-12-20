@@ -8,6 +8,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/NativeSelect")
+@JsNonModule
 private external val nativeSelectModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

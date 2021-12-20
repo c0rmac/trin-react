@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/CardActionArea")
+@JsNonModule
 private external val cardActionAreaModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

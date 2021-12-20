@@ -1,4 +1,5 @@
 @file:JsModule("react-router-transition")
+@file:JsNonModule
 
 package com.trinitcore.trinreact.ui.wrapper.reactroutertransition
 

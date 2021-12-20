@@ -12,6 +12,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/FormHelperText")
+@JsNonModule
 private external val formHelperTextModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

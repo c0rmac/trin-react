@@ -10,6 +10,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/TableContainer")
+@JsNonModule
 private external val tableContainerModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

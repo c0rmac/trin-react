@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Radio")
+@JsNonModule
 private external val radioModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")
@@ -84,6 +85,7 @@ fun RBuilder.mRadioWithLabel(
 
 
 @JsModule("@material-ui/core/RadioGroup")
+@JsNonModule
 private external val radioGroupModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

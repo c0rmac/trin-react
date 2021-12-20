@@ -9,6 +9,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/IconButton")
+@JsNonModule
 private external val iconButtonModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

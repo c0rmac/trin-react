@@ -1,120 +1,88 @@
 package com.trinitcore.trinreact.ui.trinreact
 
+import com.trinitcore.trinreact.ui.Context
 import com.trinitcore.trinreact.ui.app.material.App
-import kotlinx.serialization.KSerializer
+import kotlinx.browser.document
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlin.js.Date
+
+external fun decodeURIComponent(encodedURI: String): String
+external fun encodeURIComponent(decodedURI: String): String
 
 object LocalSession {
 
+    const val COOKIE_EXPIRATION = 30
+
     // TUS : SESSION
     // TUS : For the global session
-    fun <T>setGlobalSessionAttr(key: Enum<*>, value: T?, serializer: KSerializer<T>? = null) {
-        setSessionAttrForComp<T>(App.componentIdentifier, key, value, serializer)
+    inline fun <reified T>setGlobalSessionAttr(context: Context, key: Enum<*>, value: T?) {
+        setSessionAttrForComp<T>(context, App.componentIdentifier, key, value)
     }
 
-    fun <T>getGlobalSessionAttr(key: Enum<*>, serializer: KSerializer<*>? = null): T? {
-        return getSessionAttrForComp(App.componentIdentifier, key, serializer)
+    inline fun <reified T>getGlobalSessionAttr(context: Context, key: Enum<*>): T? {
+        return getSessionAttrForComp(context, App.componentIdentifier, key)
     }
     // DEIREADH : For the global session
 
     // TUS : TEMP ISSUE RESOLUTION - There appeared to be an issue when persisting cookies. The solution for now is to store cookie data to the memory
-    private val inMemorySession = hashMapOf<String, Any?>()
+    val inMemorySession = hashMapOf<String, Any?>()
 
-    private val usesInMemorySession: Boolean by lazy {
+    val usesInMemorySession: Boolean by lazy {
         /*
         val platform = window.navigator.platform.toLowerCase()
         platform.contains("iphone") || platform.contains("ipod") || platform.contains("ipad") ||
                 platform.contains("mac")
 
          */
-        true
+        false
     }
     // DEIREADH : TEMP ISSUE RESOLUTION
 
+    fun setCookie(cname: String, cvalue: String, exdays: Int, path: String) {
+        val d = Date(Date().getTime() + (exdays*24*60*60*1000))
+        val expires = "expires="+ d.toUTCString()
+        val cookieString = "$path-$cname=$cvalue;$expires;path=/"
+        val enc = encodeURIComponent(cookieString)
+        /* Issue: Can multiple cookies be stored?? */
+        document.cookie = enc
+    }
+
+    fun getCookie(cname: String, path: String): String {
+        val name = "$path-$cname="
+        val ca = decodeURIComponent(document.cookie).split(';')
+        for (i in ca.indices) {
+            var c = ca[i]
+            while (c[0] == ' ') {
+                c = c.substring(1)
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length)
+            }
+        }
+        return ""
+    }
+
     // TUS : For a component's session
-    fun <T>setSessionAttrForComp(componentIdentifier: String, key: Enum<*>, value: T?, serializer: KSerializer<T>? = null) {
+    inline fun <reified T>setSessionAttrForComp(context: Context, componentIdentifier: String, key: Enum<*>, value: T?) {
         if (usesInMemorySession) {
             inMemorySession["$componentIdentifier${key.name}"] = value
         } else {
-            throw IllegalStateException("Cookies not being used")
-            /*
-            var valueType = "primitive"
-            val persistValue = if (checkIsPrimitive(value)) value.toString()
-            else {
-                var serializedValue: String? = null
-
-                // Handle none primitive types
-                when {
-                    value is Enum<*> -> valueType = Enum::class.simpleName!!
-                    value is Array<*> -> valueType = Array<Any?>::class.simpleName!!
-                    value is MutableList<*> -> valueType = MutableList::class.simpleName!!
-                    value is List<*> -> valueType = List::class.simpleName!!
-                    value != null -> valueType = "generic" /* throw UnsupportedTypeForLocalSessionException(value) */
-                }
-
-                if (serializedValue == null && value != null)
-                    serializedValue = serializer?.let { defaultJson.stringify<T>(it as SerializationStrategy<T>, value) }
-                            ?: JSON.stringify(value)
-
-                serializedValue
-            }
-
-            cookies.set(key.name, persistValue, CookieOptions(path = "/$componentIdentifier"))
-            cookies.set("${key.name}-type", valueType, CookieOptions(path = "/$componentIdentifier"))
-             */
+            value?.let {
+                setCookie(key.name, context.defaultJson.encodeToString(value), COOKIE_EXPIRATION, componentIdentifier)
+            } ?: kotlin.run { setCookie(key.name, "", COOKIE_EXPIRATION, componentIdentifier) }
         }
     }
 
-    fun <T>getSessionAttrForComp(componentIdentifier: String, key: Enum<*>, serializer: KSerializer<*>? = null): T? {
-        if (usesInMemorySession) {
-            return inMemorySession["$componentIdentifier${key.name}"] as? T?
+    inline fun <reified T>getSessionAttrForComp(context: Context, componentIdentifier: String, key: Enum<*>): T? {
+        return if (usesInMemorySession) {
+            inMemorySession["$componentIdentifier${key.name}"] as? T?
         } else {
-            throw IllegalStateException("Cookies not being used")
-            /*
-            val serializedValue = cookies.get(key.name, CookieOptions(path = "/$componentIdentifier"))
-            val valueType = cookies.get("${key.name}-type", CookieOptions(path = "/$componentIdentifier"))
-
-            try {
-                if (serializedValue != null && valueType != "primitive") {
-                    val deserializedValue = serializer?.let {
-                        defaultJson.parse(it as DeserializationStrategy<T>, serializedValue)
-                    } ?: JSON.parse<T>(serializedValue)
-                    var returnValue = deserializedValue
-
-                    // TUS : Post deserialization for when the serializer is not specified
-                    if (serializer == null) {
-                        when (valueType) {
-                            Enum::class.simpleName -> {
-                                // TUS : INJECTION - Inject comparison logic for equals() call for the deserialized enum
-                                val equalsFunc: (Any?) -> Boolean = equalFunc@{ other: Any? ->
-                                    if (other is Enum<*>) {
-                                        // Issue - This is not a completed fix for the issue.
-                                        return@equalFunc other.name == deserializedValue.asDynamic()["name\$"]
-                                    }
-                                    return@equalFunc false
-                                }
-
-                                deserializedValue.asDynamic()["__proto__"] = kotlinext.js.js {
-                                    equals = equalsFunc
-                                }
-                                // DEIREADH : INJECTION - Inject comparison logic for equals() call for the deserialized enum
-                            }
-                            MutableList::class.simpleName -> {
-                                // MutableList is stored as an array. Convert back to MutableList
-                                returnValue = (deserializedValue as Array<*>).toMutableList() as T
-                            }
-                        }
-                    }
-                    // DEIREADH : Post deserialization for when the serializer is not specified
-
-                    return returnValue
-                } else {
-                    return serializedValue
-                }
-            } catch (e: Throwable) {
-                console.error(e)
-            }
-            return null
-             */
+            val serializedValue = getCookie(key.name, componentIdentifier)
+            console.log("serializedValue", serializedValue)
+            if (serializedValue.isNotBlank())
+                context.defaultJson.decodeFromString<T>(serializedValue)
+            else null
         }
     }
     // DEIREADH : For a component's session

@@ -9,6 +9,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Grow")
+@JsNonModule
 private external val growModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

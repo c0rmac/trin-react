@@ -10,6 +10,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/ListItemSecondaryAction")
+@JsNonModule
 private external val listItemSecondaryActionModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

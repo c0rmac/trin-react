@@ -12,7 +12,7 @@ import styled.css
 import styled.styledDiv
 import styled.styledH5
 
-class IconTextButton : TComponent<IconTextButton.Props, IconTextButton.State>() {
+class IconTextButton(props: Props) : TComponent<IconTextButton.Props, IconTextButton.State>(props) {
 
     companion object {
         const val componentIdentifier = "com.trinitcore.trinreact.fundemental.app.material.comp.IconTextButton"

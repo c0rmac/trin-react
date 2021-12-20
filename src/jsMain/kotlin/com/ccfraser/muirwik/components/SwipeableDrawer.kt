@@ -10,6 +10,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/SwipeableDrawer")
+@JsNonModule
 private external val swipeableDrawerModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

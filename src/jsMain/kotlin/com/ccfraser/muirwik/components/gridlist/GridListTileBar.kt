@@ -12,6 +12,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/GridListTileBar")
+@JsNonModule
 private external val gridListTileBarModule: dynamic
 private val gridListTileBarComponent: RComponent<MGridListTileBarProps, RState> =gridListTileBarModule.default
 

@@ -94,7 +94,9 @@ fun RBuilder.defaultOverlayToolbar(
         rightButtonUIBS = arrayOf(
                 fabToolbarButton(
                         addAsChild = false,
-                        onClick = { App.showDrawer() },
+                        onClick = {
+                            // App.showDrawer()
+                                  },
                         iconComponent = mMenuIcon(addAsChild = false)
                 )
         ),

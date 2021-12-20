@@ -10,6 +10,7 @@ interface VizSensorProps : StyledProps {
 }
 
 @JsModule("react-visibility-sensor")
+@JsNonModule
 private external val reactVisibilitySensorModule: dynamic
 @Suppress("UnsafeCastFromDynamic") private val reactVisibilitySensorComponent: RComponent<VizSensorProps, RState> = reactVisibilitySensorModule.default
 /** Viz Sensor */

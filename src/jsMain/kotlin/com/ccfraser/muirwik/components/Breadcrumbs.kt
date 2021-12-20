@@ -8,6 +8,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Breadcrumbs")
+@JsNonModule
 private external val breadcrumbsModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

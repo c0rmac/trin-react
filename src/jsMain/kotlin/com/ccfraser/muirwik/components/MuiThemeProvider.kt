@@ -5,6 +5,7 @@ import react.*
 
 
 @JsModule("@material-ui/core/styles")
+@JsNonModule
 private external val muiThemeProviderModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

@@ -10,6 +10,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/GridList")
+@JsNonModule
 private external val gridListModule: dynamic
 @Suppress("UnsafeCastFromDynamic")
 private val gridListComponent: RComponent<MGridListProps, RState> =gridListModule.default

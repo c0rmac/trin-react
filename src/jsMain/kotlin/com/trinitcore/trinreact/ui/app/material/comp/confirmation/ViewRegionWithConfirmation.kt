@@ -11,7 +11,8 @@ import react.RBuilder
 import styled.css
 import styled.styledDiv
 
-class ViewRegionWithConfirmation : TComponent<ViewRegionWithConfirmation.Props, ViewRegionWithConfirmation.State>() {
+class ViewRegionWithConfirmation(props: Props) :
+    TComponent<ViewRegionWithConfirmation.Props, ViewRegionWithConfirmation.State>(props) {
 
     companion object {
         const val componentIdentifier = "com.trinitcore.trinreact.fundemental.app.material.comp.confirmation.ViewRegionWithConfirmation"

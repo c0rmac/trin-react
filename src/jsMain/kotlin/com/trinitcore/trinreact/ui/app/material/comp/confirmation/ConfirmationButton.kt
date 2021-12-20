@@ -16,7 +16,8 @@ import react.RComponent
 import react.RState
 import styled.css
 
-abstract class ConfirmationButton : TComponent<ConfirmationButton.Props, ConfirmationButton.State>() {
+abstract class ConfirmationButton :
+    TComponent<ConfirmationButton.Props, ConfirmationButton.State>() {
 
     companion object {
         const val componentIdentifier = "com.clickcostz.fundemental.app.comp.confirmation.AcceptButton"

@@ -9,6 +9,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Slider")
+@JsNonModule
 private external val sliderModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

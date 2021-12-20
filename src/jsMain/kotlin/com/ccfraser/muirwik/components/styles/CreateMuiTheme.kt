@@ -4,7 +4,8 @@ import kotlinext.js.jsObject
 import react.RProps
 
 //@JsModule("@material-ui/core/styles/themeListener")
-//private external val themeListener: dynamic
+//@JsNonModule
+private external val themeListener: dynamic
 
 
 /**
@@ -43,6 +44,7 @@ external interface Theme {
 
 
 @JsModule("@material-ui/core/styles/createMuiTheme")
+@JsNonModule
 private external val createMuiThemeModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

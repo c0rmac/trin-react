@@ -12,6 +12,7 @@ import react.ReactElement
 import styled.StyledHandler
 
 @JsModule("@material-ui/core/FormControlLabel")
+@JsNonModule
 private external val formControlLabelModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

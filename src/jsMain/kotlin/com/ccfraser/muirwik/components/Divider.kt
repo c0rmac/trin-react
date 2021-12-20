@@ -8,6 +8,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/Divider")
+@JsNonModule
 private external val dividerModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

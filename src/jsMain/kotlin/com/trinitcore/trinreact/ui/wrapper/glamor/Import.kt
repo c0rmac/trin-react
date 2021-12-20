@@ -1,4 +1,5 @@
 @file:JsModule("glamor")
+@file:JsNonModule
 
 package com.trinitcore.trinreact.ui.wrapper.glamor
 

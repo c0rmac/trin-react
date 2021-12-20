@@ -9,6 +9,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/Container")
+@JsNonModule
 private external val containerModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

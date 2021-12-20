@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/FilledInput")
+@JsNonModule
 private external val filledInputModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

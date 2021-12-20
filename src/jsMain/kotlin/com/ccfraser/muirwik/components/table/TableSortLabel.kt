@@ -13,6 +13,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/TableSortLabel")
+@JsNonModule
 private external val tableSortLabelModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

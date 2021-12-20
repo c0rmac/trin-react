@@ -7,6 +7,7 @@ import react.RState
 
 
 @JsModule("@material-ui/core/CssBaseline")
+@JsNonModule
 private external val cssBaselineModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

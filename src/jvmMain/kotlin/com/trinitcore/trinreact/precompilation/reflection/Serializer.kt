@@ -1,6 +1,5 @@
 package com.trinitcore.trinreact.precompilation.reflection
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.trinitcore.trinreact.precompilation.GeneratorConfig
 import java.io.File
 
@@ -19,7 +18,7 @@ class JSONSerializer(
         for (path in generatorConfig.buildDirsJson) {
             val dir = File(path)
             if (!dir.exists()) dir.mkdirs()
-            ObjectMapper().writeValue(File("$path/main.json"), tReflectionContext)
+            // ObjectMapper().writeValue(File("$path/main.json"), tReflectionContext)
         }
     }
 
@@ -28,12 +27,11 @@ class JSONSerializer(
 class CodeGeneratingSerializer(
     /** The target paths for which hold directory paths com.precompilation. A _Generated.kt file will be created in the
      * com/clickcostz/precompilation directory */
-    override val buildDirs: Array<String>
+    override val buildDirs: Array<String>,
+    val packageName: String
 ) : Serializer {
 
     companion object {
-        const val DEFAULT_PACKAGE = "com.clickcostz.precompilation"
-        const val DEFAULT_SUB_DIR = "com/clickcostz/precompilation"
         const val DEFAULT_FILE_NAME = "_Generated.kt"
     }
 
@@ -46,11 +44,11 @@ class CodeGeneratingSerializer(
 
         // tReflectionContext.classes.forEach { appendImport(it.qualifiedPackage, it.name) }
         // tReflectionContext.functions.forEach { appendImport(it.qualifiedPackage, it.name) }
-        appendImport("com.clickcostz.common.precompilation.reflection", "TClass")
-        appendImport("com.clickcostz.common.precompilation.reflection", "TFunction")
-        appendImport("com.clickcostz.common.precompilation.reflection", "TClassType")
-        appendImport("com.clickcostz.common.precompilation.reflection", "TParam")
-        appendImport("com.clickcostz.common.precompilation.reflection", "TReturnType")
+        appendImport(TClass::class.java.packageName, "TClass")
+        appendImport(TFunction::class.java.packageName, "TFunction")
+        appendImport(TClassType::class.java.packageName, "TClassType")
+        appendImport(TParam::class.java.packageName, "TParam")
+        appendImport(TReturnType::class.java.packageName, "TReturnType")
         // DEIREADH : Generate imports
 
         body += "\n"
@@ -124,18 +122,41 @@ class CodeGeneratingSerializer(
         // DEIREADH : Declare tClasses
 
         // TUS : Generate mapping
+        // TUS : Class mapping
+        fun getPackageMapping(tClass: TClass): String {
+            var string = ""
+            string += "\"${tClass.qualifiedPackage}.${tClass.name}\" to ${tClass.qualifiedPackage}.${tClass.name}::class,\n"
+            tClass.classes.forEach {
+                string += getPackageMapping(it)
+            }
+            return string
+        }
+        fun getSubClassMapping(superPackage: String, index: Int, tClass: TClass): String {
+            var string = ""
+            string += "${tClass.qualifiedPackage}$superPackage.${tClass.name}::class to tClass${index},\n"
+            return string
+        }
+        // DEIREADH : Class mapping
+
         body += "internal val kClassesToTClasses = mapOf(\n"
-        tReflectionContext.classes.forEachIndexed { index, tClass -> body += "${tClass.qualifiedPackage}.${tClass.name}::class to tClass${index},\n" }
+        tReflectionContext.classes.forEachIndexed { index, tClass ->
+            body += "${tClass.qualifiedPackage}.${tClass.name}::class to tClass${index},\n"
+            tClass.classes.forEachIndexed { subIndex, subTClass ->
+                body += "${subTClass.qualifiedPackage}.${subTClass.name}::class to tClass${index}.classes[${subIndex}],\n"
+            }
+        }
         body += ")\n\n"
 
         body += "internal val qualifiedPackagesToKClasses = mapOf(\n"
-        tReflectionContext.classes.forEachIndexed { index, tClass -> body += "\"${tClass.qualifiedPackage}.${tClass.name}\" to ${tClass.qualifiedPackage}.${tClass.name}::class,\n" }
+        tReflectionContext.classes.forEachIndexed { index, tClass ->
+            body += getPackageMapping(tClass)
+        }
         body += ")"
         // DEIREADH : Generate mapping
 
         for (buildDir in buildDirs) {
-            val document = "package $DEFAULT_PACKAGE\n\n${body}"
-            val filePath = "$buildDir/$DEFAULT_SUB_DIR/$DEFAULT_FILE_NAME"
+            val document = "package $packageName.gen\n\n${body}"
+            val filePath = "$buildDir/$DEFAULT_FILE_NAME"
             val file = File(filePath)
             file.delete()
             file.createNewFile()

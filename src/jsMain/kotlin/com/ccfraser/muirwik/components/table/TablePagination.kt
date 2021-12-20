@@ -14,6 +14,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/TablePagination")
+@JsNonModule
 private external val tablePaginationModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

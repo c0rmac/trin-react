@@ -8,6 +8,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/ListItem")
+@JsNonModule
 private external val listItemModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

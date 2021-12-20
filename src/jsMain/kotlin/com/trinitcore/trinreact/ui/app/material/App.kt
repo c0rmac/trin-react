@@ -11,12 +11,12 @@ import com.ccfraser.muirwik.components.styles.createMuiTheme
 import com.ccfraser.muirwik.components.transitions.SlideTransitionDirection
 import com.ccfraser.muirwik.components.transitions.mFade
 import com.ccfraser.muirwik.components.transitions.mSlide
-import com.trinitcore.trinreact.ui.MAX_VP_WIDTH
 import com.trinitcore.trinreact.ui.app.material.comp.BottomBar
 import com.trinitcore.trinreact.ui.app.material.comp.Toast
 import com.trinitcore.trinreact.ui.app.material.comp.singleton.OverlayBar
 import com.trinitcore.trinreact.ui.app.material.comp.singleton.ProgressIndicator
 import com.clickcostz.fundemental.app.comp.singleton.SplashScreen
+import com.trinitcore.trinreact.ui.MAX_VP_WIDTH
 import com.trinitcore.trinreact.ui.trinreact.ViewController
 import com.trinitcore.trinreact.ui.trinreact.primary
 import com.trinitcore.trinreact.ui.wrapper.materialicon.mArrowBackIosIcon
@@ -32,7 +32,6 @@ import react.router.dom.hashRouter
 import styled.StyleSheet
 import styled.css
 import styled.styledDiv
-
 
 //const val SPLASH_SCREEN_DUR = 5000
 const val SPLASH_SCREEN_DUR = 1
@@ -88,12 +87,13 @@ interface AppState : RState {
 
 interface AppProps : RProps {
     var innerComponentAdapter: AppInnerComponentAdapter
-    var context: Context
 }
 
-object App : RComponent<AppProps, AppState>() {
+class App : RComponent<AppProps, AppState>() {
 
-    const val componentIdentifier = "com.trinitcore.trinreact.fundemental.app.material.App"
+    companion object {
+        const val componentIdentifier = "com.trinitcore.trinreact.fundemental.app.material.App"
+    }
 
     object Style : StyleSheet("com-clickcostz-webapp-Main", isStatic = true) {
         val body by css {
@@ -113,11 +113,16 @@ object App : RComponent<AppProps, AppState>() {
             zIndex = 2
         }
 
-        val toastContainer by css {
+        val toastWrapper by css {
             position = Position.fixed
             bottom = 0.px
             width = 100.pct
             zIndex = 4
+        }
+
+        val toastInner by css {
+            marginLeft = LinearDimension.auto
+            marginRight = LinearDimension.auto
             maxWidth = MAX_VP_WIDTH
         }
 
@@ -138,7 +143,7 @@ object App : RComponent<AppProps, AppState>() {
         this.searchOverlayVisible = false
         this.dialogVisible = false
         this.drawerVisible = false
-        this.pageTitle = context.appName
+        // this.pageTitle = context.appName
     }
 
     init {
@@ -146,16 +151,20 @@ object App : RComponent<AppProps, AppState>() {
         this.state.isDimmedOverlayVisible = false
 
         // TUS : SplashScreen
+        /*
         if (SPLASH_SCREEN_DUR != -1) {
             window.setTimeout({
                 SplashScreen.hide()
             }, SPLASH_SCREEN_DUR)
         }
+         */
         // DEIREADH : SplashScreen
     }
 
+    /*
     val context: Context
     get() = props.context
+     */
 
     // TUS : Toolbar Configuration
     // TUS : Default toolbar
@@ -164,6 +173,7 @@ object App : RComponent<AppProps, AppState>() {
                           custLeftButton: ReactElement? = null,
                           custoRightButton: ReactElement? = null
     ) {
+        console.log("isToolbarTitleVisible", true)
         setState {
             this.isToolbarVisible = true
             this.isToolbarTitleVisible = true
@@ -177,12 +187,14 @@ object App : RComponent<AppProps, AppState>() {
     }
 
     fun hideToolbarTitle() {
+        console.log("isToolbarTitleVisible", false)
         setState {
             this.isToolbarTitleVisible = false
         }
     }
 
     fun showToolbarTitle() {
+        console.log("isToolbarTitleVisible", true)
         setState {
             this.isToolbarTitleVisible = true
         }
@@ -445,7 +457,8 @@ object App : RComponent<AppProps, AppState>() {
                         true) {
                      */
                     val innerComponentAdapter = child(props.innerComponentAdapter::class) {
-
+                        attrs.app = this@App
+                        attrs.appContext = props.innerComponentAdapter.providedAppContext
                     }
                     // }
 
@@ -480,13 +493,16 @@ object App : RComponent<AppProps, AppState>() {
                     if (toastPropBundle != null)
                         mSlide(show = state.isToastVisible, direction = SlideTransitionDirection.up) {
                             styledDiv {
-                                css { +Style.toastContainer }
-                                child(Toast::class) { attrs {
-                                    this.propBundleForState = toastPropBundle
-                                    this.closeButtonOnClick = {
-                                        dismissToast()
-                                    }
-                                } }
+                                css { +Style.toastWrapper }
+                                styledDiv {
+                                    css { +Style.toastInner }
+                                    child(Toast::class) { attrs {
+                                        this.propBundleForState = toastPropBundle
+                                        this.closeButtonOnClick = {
+                                            dismissToast()
+                                        }
+                                    } }
+                                }
                             }
                         }
                 }

@@ -10,6 +10,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/DialogContent")
+@JsNonModule
 private external val dialogContentModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

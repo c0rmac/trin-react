@@ -7,6 +7,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Link")
+@JsNonModule
 private external val linkModule: dynamic
 private val linkComponent: RComponent<MLinkProps, RState> = linkModule.default
 

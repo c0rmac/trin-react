@@ -9,6 +9,7 @@ import styled.StyledHandler
 import styled.StyledProps
 
 @JsModule("@material-ui/core/ExpansionPanelDetails")
+@JsNonModule
 private external val expansionPanelDetailsModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

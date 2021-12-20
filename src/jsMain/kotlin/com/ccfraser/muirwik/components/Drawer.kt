@@ -12,6 +12,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Drawer")
+@JsNonModule
 private external val drawerModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

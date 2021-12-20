@@ -2,7 +2,8 @@ package com.trinitcore.trinreact.ui.wrapper.reactgeocode
 
 import kotlin.js.Promise
 
-@JsModule("react-geocode") private external val geocodeModule: dynamic
+@JsModule("react-geocode") @JsNonModule
+private external val geocodeModule: dynamic
 @Suppress("UnsafeCastFromDynamic") val geocode: Geocode = geocodeModule.default
 
 external class Geocode {

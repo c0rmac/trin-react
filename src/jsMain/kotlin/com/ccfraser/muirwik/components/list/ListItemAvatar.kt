@@ -13,6 +13,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/ListItemAvatar")
+@JsNonModule
 private external val listItemAvatarModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

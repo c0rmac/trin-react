@@ -2,14 +2,13 @@ package com.trinitcore.trinreact.ui.trinreact
 
 import com.trinitcore.trinreact.exception.InternalClientRESTException
 import com.trinitcore.trinreact.exception.RESTError
-import com.trinitcore.trinreact.ui.app.material.Context
+import com.trinitcore.trinreact.ui.Context
 import kotlinext.js.js
 import kotlinx.browser.window
 import kotlinx.coroutines.*
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.json.Json
 import org.w3c.fetch.RequestInit
 import org.w3c.fetch.Response
 import kotlin.reflect.KClass
@@ -19,7 +18,15 @@ private val prefixVocabForGETReq = hashSetOf("get", "find", "fetch")
 /** prefixVocabularyForPUTRequests */
 private val prefixVocabForPUTReq = hashSetOf("put", "generate", "set", "create")
 
-class API(val context: Context) {
+enum class MediaType(val value: String) {
+    APPLICATION_FORM_URLENCODED("application/x-www-form-urlencoded"), TEXT_PLANE("text/plain")
+}
+
+class RESTAPIManager(
+    val context: Context,
+    /** Sub prefix of the requests. Must start with '/your_url' */ private val subPrefix: String = "",
+    val post: MediaType = MediaType.TEXT_PLANE
+) {
 
     private fun getParamNames(serializedFuncBody: String): Array<String> {
         var funcIsFound = false
@@ -82,14 +89,16 @@ class API(val context: Context) {
         return deSerializedFuncParams.toTypedArray()
     }
 
-    /** getThrowableForUnspecifiedParameter */
-    private fun getThrwbleForUnspecParam(funcName: String, paramName: String, index: Int) =
-        Throwable("The statically typed parameter p$index which acts as a placeholder for $paramName is not defined for the function $funcName. Please define it.")
+    companion object {
+        /** getThrowableForUnspecifiedParameter */
+        private fun getThrwbleForUnspecParam(funcName: String, paramName: String, index: Int) =
+            Throwable("The statically typed parameter p$index which acts as a placeholder for $paramName is not defined for the function $funcName. Please define it.")
 
-    /** apiInstanceParameterNameExclusions */
-    private val apiInstanceParamNameExls = hashSetOf("continuation", "callback\$default", "webSession", "request")
+        /** apiInstanceParameterNameExclusions */
+        private val apiInstanceParamNameExls = hashSetOf("continuation", "callback\$default", "webSession", "request")
 
-    private val apiInstances = hashMapOf<String, Any>()
+        private val apiInstances = hashMapOf<String, Any>()
+    }
 
     fun <T : Any> getAPIInstance(kClass: KClass<T>): T {
         return apiInstances.getOrPut(context.reflection.findClass(kClass)!!.qualifiedName) {
@@ -158,6 +167,7 @@ class API(val context: Context) {
                             (firstTypeParameterQualifiedName ?: returnTypeQualifiedName) ?: throw IllegalStateException(
                                 "TFunction not found for ${funcName}"
                             )
+                        console.log("innerFuncReturnQualName", innerFuncReturnQualName)
                         console.log("firstTypeParameterQualifiedName", firstTypeParameterQualifiedName)
                         console.log("returnTypeQualifiedName", returnTypeQualifiedName)
                         val innerFuncReturnSerializer = context.reflection.findKClass(
@@ -168,7 +178,16 @@ class API(val context: Context) {
 
                         val returnSerializer =
                             if (firstTypeParameterQualifiedName != null && innerFuncReturnSerializer != null)
-                                ListSerializer(innerFuncReturnSerializer) else innerFuncReturnSerializer
+                                ListSerializer(innerFuncReturnSerializer)
+                            else if (innerFuncReturnSerializer != null) innerFuncReturnSerializer
+                        else {
+                            when (returnTypeQualifiedName) {
+                                "String" -> String.serializer()
+                                "Int" -> Int.serializer()
+                                "Long" -> Long.serializer()
+                                else -> null
+                            }
+                        }
 
                         for (prefix in prefixVocabForGETReq) {
                             if (invokableFuncName.startsWith(prefix)) {
@@ -324,6 +343,7 @@ class API(val context: Context) {
         return a as T
     }
 
+    @OptIn(InternalSerializationApi::class)
     suspend fun <T> sendRequest(
         method: String,
         webListnerFuncName: String,
@@ -338,9 +358,25 @@ class API(val context: Context) {
             && params.values.firstOrNull()?.let { checkIsPrimitive(it) || it is Enum<*> } != true
             && method != "GET"
         ) {
+            console.log(params)
             // Method 1 - Use the only object parameter as the body for the request. This is subject to GET request constraints.
             params.values.firstOrNull()?.let { value ->
-                jsonStringRequestBody = serializer?.let { Json.encodeToString(value) } ?: JSON.stringify(value)
+                console.log(value)
+                val firstParamSerializer = value::class.serializerOrNull() as? KSerializer<Any>?
+                val firstClass = value::class
+                val firstTClass = context.reflection.findClass(firstClass)!!
+                val firstName = firstTClass.qualifiedName
+                val secondPackage = firstName.split(".").toMutableList().apply { removeLast() }.joinToString(".")
+                val secondClass = context.reflection.findKClass(secondPackage)
+                val secondParamSerializer = secondClass?.serializerOrNull() as? KSerializer<Any>?
+
+                val paramSerializer = if (secondParamSerializer is SealedClassSerializer) secondParamSerializer else firstParamSerializer
+
+                jsonStringRequestBody = paramSerializer?.let { context.defaultJson.encodeToString(it, value) } ?: run {
+                    console.warn("Unable to serialize using standard method")
+                    JSON.stringify(value)
+                }
+                // jsonStringRequestBody = serializer?.let { Json.encodeToString(value) } ?: JSON.stringify(value)
             }
         } else {
             // Method 2 - Serialize the attributes of the objects and the primitives from the function argument into a query string
@@ -384,16 +420,26 @@ class API(val context: Context) {
             }.joinToString("&")
         }
 
+        console.log("queryString", queryString)
+
+        val usePostUrlEncoded = (jsonStringRequestBody.isNullOrEmpty() && method == "POST" && post == MediaType.APPLICATION_FORM_URLENCODED)
+        val fetchUrl = "${context.apiUrlPrefix}${this.subPrefix}/$webListnerFuncName" + if (!usePostUrlEncoded) "?$queryString" else ""
+
         val response = window.fetch(
-            "${context.apiUrlPrefix}/$webListnerFuncName?$queryString",
+            fetchUrl,
             RequestInit(
                 method = method,
                 headers = js {
                     Accept = "application/json";
-                    this["Content-Type"] = "application/json"
                     this["Accept-Language"] = window.navigator.language
+
+                    this["Content-Type"] = if (usePostUrlEncoded) {
+                        post.value
+                    } else {
+                        "application/json"
+                    }
                 },
-                body = jsonStringRequestBody
+                body = if (usePostUrlEncoded) queryString else jsonStringRequestBody
             )
         )
             .await()

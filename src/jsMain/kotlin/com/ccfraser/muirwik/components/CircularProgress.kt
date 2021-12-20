@@ -10,6 +10,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/CircularProgress")
+@JsNonModule
 private external val circularProgressModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

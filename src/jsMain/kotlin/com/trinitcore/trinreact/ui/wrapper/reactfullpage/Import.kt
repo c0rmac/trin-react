@@ -1,4 +1,5 @@
 @file:JsModule("react-full-page")
+@file:JsNonModule
 
 package com.trinitcore.trinreact.ui.wrapper.reactfullpage
 

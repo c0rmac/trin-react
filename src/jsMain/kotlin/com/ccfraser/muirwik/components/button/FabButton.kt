@@ -9,6 +9,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Fab")
+@JsNonModule
 private external val fabModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

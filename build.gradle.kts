@@ -1,3 +1,5 @@
+val kotlinSerializationVersion: String by rootProject
+
 plugins {
     kotlin("multiplatform") version "1.5.30"
     kotlin("plugin.serialization") version "1.5.30"
@@ -18,6 +20,9 @@ kotlin {
             commonWebpackConfig {
                 cssSupport.enabled = true
             }
+            distribution {
+                directory = File("$projectDir/server/app/src/main/resources/static")
+            }
         }
     }
 
@@ -31,7 +36,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+                implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
             }
         }
         val jsMain by getting {
@@ -69,13 +74,18 @@ kotlin {
 
                 implementation(npm("react-helmet", "6.1.0"))
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+                implementation(npm("@aws-sdk/client-s3", "3.30.0"))
+                implementation(npm("@aws-sdk/client-cognito-identity", "3.30.0"))
+                implementation(npm("@aws-sdk/credential-provider-cognito-identity", "3.30.0"))
+
+                implementation(npm("@stripe/react-stripe-js", "1.5.0"))
+                implementation(npm("@stripe/stripe-js", "1.18.0"))
             }
         }
         val jvmMain by getting {
             dependencies {
-                implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+")
-                implementation("com.fasterxml.jackson.core:jackson-core:2.11.+")
+                // implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+")
+                // implementation("com.fasterxml.jackson.core:jackson-core:2.11.+")
             }
         }
     }

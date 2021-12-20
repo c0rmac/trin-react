@@ -10,6 +10,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/CardContent")
+@JsNonModule
 private external val cardContentModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

@@ -7,6 +7,7 @@ import react.*
 import styled.StyledHandler
 
 @JsModule("@material-ui/core/ExpansionPanelSummary")
+@JsNonModule
 private external val expansionPanelSummaryModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

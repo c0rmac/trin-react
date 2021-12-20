@@ -8,6 +8,7 @@ import styled.StyledProps
 
 
 @JsModule("@material-ui/core/Paper")
+@JsNonModule
 private external val paperModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

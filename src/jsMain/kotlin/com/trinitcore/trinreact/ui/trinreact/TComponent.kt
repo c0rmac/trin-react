@@ -6,6 +6,8 @@ import com.trinitcore.trinreact.ui.app.material.comp.DefaultLoadingCover
 import com.trinitcore.trinreact.exception.InternalClientRESTException
 import com.trinitcore.trinreact.exception.InternalServerRESTException
 import com.trinitcore.trinreact.exception.RESTException
+import com.trinitcore.trinreact.exception.UnauthorisedRESTException
+import com.trinitcore.trinreact.ui.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
@@ -15,7 +17,8 @@ import styled.StyleSheet
 
 
 interface TProps : RProps {
-
+    var app: App
+    var appContext: Context
 }
 
 interface TState : RState {
@@ -24,7 +27,7 @@ interface TState : RState {
 
 enum class TLoadingIndicType {COVER, LOADING_BAR, NONE}
 
-abstract class TComponent<P : RProps, S : TState> : RComponent<P, S> {
+abstract class TComponent<P : TProps, S : TState> : RComponent<P, S> {
 
     constructor() : super()
 
@@ -55,22 +58,22 @@ abstract class TComponent<P : RProps, S : TState> : RComponent<P, S> {
 
     // TUS : SESSION
     // TUS : For this component's session
-    fun <T>setSessionAttr(key: Enum<*>, value: T?, serializer: KSerializer<T>? = null) {
-        LocalSession.setSessionAttrForComp(componentIdentifier, key, value, serializer)
+    inline fun <reified T>setSessionAttr(key: Enum<*>, value: T?) {
+        LocalSession.setSessionAttrForComp(props.appContext, componentIdentifier, key, value)
     }
 
-    fun <T>getSessionAttr(key: Enum<*>, serializer: KSerializer<T>? = null): T? {
-        return LocalSession.getSessionAttrForComp(componentIdentifier, key, serializer)
+    inline fun <reified T>getSessionAttr(key: Enum<*>): T? {
+        return LocalSession.getSessionAttrForComp(props.appContext, componentIdentifier, key)
     }
     // DEIREADH : For this component's session
 
     // TUS : For the global session
-    fun <T>setGlobalSessionAttr(key: Enum<*>, value: T?, serializer: KSerializer<T>? = null) {
-        LocalSession.setSessionAttrForComp(App.componentIdentifier, key, value, serializer)
+    inline fun <reified T>setGlobalSessionAttr(key: Enum<*>, value: T?) {
+        LocalSession.setSessionAttrForComp(props.appContext, App.componentIdentifier, key, value)
     }
 
-    fun <T>getGlobalSessionAttr(key: Enum<*>, serializer: KSerializer<T>? = null): T? {
-        return LocalSession.getSessionAttrForComp(App.componentIdentifier, key, serializer)
+    inline fun <reified T>getGlobalSessionAttr(key: Enum<*>): T? {
+        return LocalSession.getSessionAttrForComp(props.appContext, App.componentIdentifier, key)
     }
     // DEIREADH : For the global session
     // DEIREADH : SESSION
@@ -86,7 +89,7 @@ abstract class TComponent<P : RProps, S : TState> : RComponent<P, S> {
             Language.GA -> "Tharla rud éigin as bealach"
             Language.ES -> "Algo salió mal"
         }
-        App.showToast(error, errorMessage)
+        props.app.showToast(error, errorMessage)
     }
 
     // TUS : REST Handling
@@ -101,32 +104,35 @@ abstract class TComponent<P : RProps, S : TState> : RComponent<P, S> {
             it
         })
 
-        if (loadingIndicType == TLoadingIndicType.LOADING_BAR && !hideLoadingIndic)
-            App.showProgressIndicator()
+        // if (loadingIndicType == TLoadingIndicType.LOADING_BAR && !hideLoadingIndic)
+        //    App.showProgressIndicator()
 
         mainScope.promise {
             try {
                 block()
             } catch (e: Exception) {
-                if (e is RESTException) {
+                if (e is UnauthorisedRESTException) {
+                    ViewController.visibleInstance.go(to = props.appContext.unauthorisedRedirect)
+                } else if (e is RESTException) {
                     if (e is InternalServerRESTException || e is InternalClientRESTException)
                         console.error(e)
 
                     showErrorToast(e.defaultText)
-                } else {
-                    // throw e
-                    console.error(e)
+                }
+                else if (e !is ClassCastException) {
+                    e.printStackTrace()
                     showErrorToast(InternalClientRESTException("An unexpected error occurred.", language, e).defaultText)
                 }
             }
+            console.log("Stopped loading", hideLoadingIndic)
 
             if (!hideLoadingIndic)
                 setState({
                     it.isLoading = false
                     it
                 }, {
-                    if (loadingIndicType == TLoadingIndicType.LOADING_BAR)
-                        App.hideProgressIndicator()
+                    // if (loadingIndicType == TLoadingIndicType.LOADING_BAR)
+                    //    App.hideProgressIndicator()
                 })
         }
     }

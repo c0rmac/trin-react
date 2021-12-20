@@ -9,6 +9,7 @@ import react.RState
 import styled.StyledHandler
 
 @JsModule("@material-ui/core/ButtonBase")
+@JsNonModule
 private external val buttonBaseModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

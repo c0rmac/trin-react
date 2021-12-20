@@ -14,6 +14,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/InputLabel")
+@JsNonModule
 private external val inputLabelModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

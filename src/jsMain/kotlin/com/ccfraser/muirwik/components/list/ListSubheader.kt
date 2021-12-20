@@ -16,6 +16,7 @@ import styled.css
 
 
 @JsModule("@material-ui/core/ListSubheader")
+@JsNonModule
 private external val listSubheaderModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

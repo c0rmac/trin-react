@@ -10,6 +10,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Chip")
+@JsNonModule
 private external val chipModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

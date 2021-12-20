@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Collapse")
+@JsNonModule
 private external val collapseModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

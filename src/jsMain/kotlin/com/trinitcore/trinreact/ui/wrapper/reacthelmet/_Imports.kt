@@ -1,4 +1,5 @@
 @file:JsModule("react-helmet")
+@file:JsNonModule
 
 package com.trinitcore.trinreact.ui.wrapper.reacthelmet
 

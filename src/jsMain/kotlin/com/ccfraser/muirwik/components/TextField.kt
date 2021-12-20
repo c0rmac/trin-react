@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/TextField")
+@JsNonModule
 private external val textFieldDefault: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

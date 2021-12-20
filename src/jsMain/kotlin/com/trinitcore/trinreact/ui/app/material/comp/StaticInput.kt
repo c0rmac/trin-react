@@ -12,7 +12,7 @@ import styled.css
 import styled.styledH4
 import styled.styledH5
 
-class StaticInput : TComponent<StaticInput.Props, StaticInput.State>() {
+class StaticInput(props: Props) : TComponent<StaticInput.Props, StaticInput.State>(props) {
 
     companion object {
         const val componentIdentifier = "com.trinitcore.trinreact.fundemental.app.material.comp.StaticInput"

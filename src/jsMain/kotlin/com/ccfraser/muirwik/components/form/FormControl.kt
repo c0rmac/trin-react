@@ -8,6 +8,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/FormControl")
+@JsNonModule
 private external val formControlModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

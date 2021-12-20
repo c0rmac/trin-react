@@ -60,7 +60,7 @@ class TReflectionUtilities(
     fun useForPreCompilation() {
         val context = TReflectionContext(classes.toTypedArray(), functions.toTypedArray())
 
-        val serializer = CodeGeneratingSerializer(generatorConfig.buildDirsCodeGen)
+        val serializer = CodeGeneratingSerializer(generatorConfig.buildDirsCodeGen, generatorConfig.packageName)
         serializer.persist(context)
     }
 
@@ -97,6 +97,8 @@ class TReflectionUtilities(
         val functions = mutableListOf<TFunction>()
         val classes = mutableListOf<TClass>()
 
+        val startingDepth = head.scopeDepth
+
         var keyword = ""
 
         while (true) {
@@ -110,8 +112,18 @@ class TReflectionUtilities(
                     KEYWORD_FUNC -> functions.add(parseFunction(qualifiedPackage, code, head, imports))
                     KEYWORD_IMPORT -> parseImport(code, head).let { imports[it.split(".").last()] = it }
                 }
+
                 keyword = ""
             } else keyword += char
+
+            // Stop process at extraneous '}'
+            try {
+                if (head.scopeDepth == (startingDepth - 1) && char == '}') {
+                    break
+                }
+            } catch (e: StringIndexOutOfBoundsException) {
+                break
+            }
         }
 
         return KotlinCombo(functions.toTypedArray(), classes.toTypedArray())
@@ -137,10 +149,14 @@ class TReflectionUtilities(
 
         var name = ""
         var searchingForName = true
+        var parsingKotlin = false
+
+        val startingDepth = head.scopeDepth
 
         while (true) {
             val char = code.getOrNull(head.nextPosition()) ?: break
             head.registerChar(char)
+
             if (searchingForName) {
                 if (
                         char == '{' ||
@@ -157,9 +173,23 @@ class TReflectionUtilities(
                     name += char
                 }
             } else {
-                val combo = parseKotlin(qualifiedPackage, code, head, imports)
-                functions = combo.functions
-                classes = combo.classes
+                if (char == '{') parsingKotlin = true
+
+                if (parsingKotlin) {
+                    val combo = parseKotlin("$qualifiedPackage.$name", code, head, imports)
+                    functions = combo.functions
+                    classes = combo.classes
+                }
+
+                // Stop process at extraneous '}'
+                try {
+                    val a = code[head.position - 1]
+                    if (head.scopeDepth == (startingDepth) && a == '}') {
+                        break
+                    }
+                } catch (e: StringIndexOutOfBoundsException) {
+                    break
+                }
             }
         }
 
@@ -179,9 +209,20 @@ class TReflectionUtilities(
 
         val params = mutableListOf<TParam>()
 
+        val startingDepth = head.scopeDepth
+
         while (true) {
             val char = code.getOrNull(head.nextPosition()) ?: break
             head.registerChar(char)
+
+            if (char == '}') {
+                char
+                // Stop function reflection at extraneous '}'
+                if ((startingDepth - 1) == head.scopeDepth && char == '}') {
+                    break
+                }
+            }
+
             if (char == '(' && !parsingParams) {
                 parsingParams = true
             } else if (char == ')') {

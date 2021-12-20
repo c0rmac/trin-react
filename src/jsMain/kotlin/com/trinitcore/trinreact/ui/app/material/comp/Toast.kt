@@ -16,7 +16,7 @@ import styled.css
 import styled.styledDiv
 import styled.styledH2
 
-class Toast : TComponent<Toast.Props, TState>() {
+class Toast(props: Props) : TComponent<Toast.Props, TState>(props) {
 
     companion object {
         val componentIdentifier: String = "com.trinitcore.trinreact.fundemental.app.material.comp.Toast"

@@ -10,6 +10,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/FormLabel")
+@JsNonModule
 private external val formLabelModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

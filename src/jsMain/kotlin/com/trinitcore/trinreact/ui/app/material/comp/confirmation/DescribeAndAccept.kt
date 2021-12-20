@@ -19,7 +19,7 @@ import styled.styledDiv
 import styled.styledH4
 import styled.styledSpan
 
-class DescribeAndAccept : TComponent<DescribeAndAccept.Props, DescribeAndAccept.State>() {
+class DescribeAndAccept(props: Props) : TComponent<DescribeAndAccept.Props, DescribeAndAccept.State>(props) {
 
     companion object {
         const val componentIdentifier = "com.clickcostz.consumerapp.layout.comp.confirmation.DescribeAndAcceptViewRegion"

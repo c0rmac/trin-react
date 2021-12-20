@@ -11,6 +11,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/MenuList")
+@JsNonModule
 private external val menuListModule: dynamic
 private val menuList: RComponent<MMenuListProps, RState> = menuListModule.default
 

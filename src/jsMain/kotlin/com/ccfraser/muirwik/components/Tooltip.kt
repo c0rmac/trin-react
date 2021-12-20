@@ -9,6 +9,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Tooltip")
+@JsNonModule
 private external val tooltipModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

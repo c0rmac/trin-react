@@ -9,6 +9,7 @@ import styled.StyledHandler
 
 
 @JsModule("@material-ui/core/Fade")
+@JsNonModule
 private external val fadeModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

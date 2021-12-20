@@ -10,6 +10,7 @@ import react.ReactElement
 
 
 @JsModule("@material-ui/core/Dialog")
+@JsNonModule
 private external val dialogModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")

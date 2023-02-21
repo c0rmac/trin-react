@@ -386,7 +386,7 @@ class RESTAPIManager(
                         null
                     }
                     checkIsPrimitive(it.value) -> {
-                        it.key + "=" + it.value
+                        it.key + "=" + js("encodeURIComponent")(it.value)
                     }
                     it.value is Enum<*> -> {
                         it.key + "=" + (it.value as Enum<*>).name
@@ -403,6 +403,8 @@ class RESTAPIManager(
 
                                 val c = mutableListOf<String>()
                                 // a.forEachIndexed { index, t -> c.add("$c=${js("encodeURIComponent")(b[index])}") }
+                                console.log("parameter", b)
+
                                 a.forEachIndexed { index, t ->
                                     if (b[index] != null) c.add(
                                         "$t=${

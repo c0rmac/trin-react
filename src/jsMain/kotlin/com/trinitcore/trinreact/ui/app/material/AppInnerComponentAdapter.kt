@@ -14,7 +14,7 @@ abstract class AppInnerComponentAdapter(internal val providedAppContext: Context
     }
 
     val appContext: Context
-    get() = props.appContext
+    get() = props?.appContext ?: providedAppContext
 
     open val hashRouter = false
     abstract val drawerItems: List<DrawerItem>

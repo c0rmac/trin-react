@@ -1,5 +1,8 @@
 package com.trinitcore.trinreact
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class Language {EN, GA, ES}
 
 interface TLocalisable {

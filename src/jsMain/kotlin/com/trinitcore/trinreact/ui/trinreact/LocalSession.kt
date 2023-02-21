@@ -42,15 +42,15 @@ object LocalSession {
     fun setCookie(cname: String, cvalue: String, exdays: Int, path: String) {
         val d = Date(Date().getTime() + (exdays*24*60*60*1000))
         val expires = "expires="+ d.toUTCString()
-        val cookieString = "$path-$cname=$cvalue;$expires;path=/"
-        val enc = encodeURIComponent(cookieString)
+        val cookieString = "$cname=$cvalue;"
+        val enc = cookieString
         /* Issue: Can multiple cookies be stored?? */
         document.cookie = enc
     }
 
     fun getCookie(cname: String, path: String): String {
-        val name = "$path-$cname="
-        val ca = decodeURIComponent(document.cookie).split(';')
+        val name = "$cname="
+        val ca = document.cookie.split(';')
         for (i in ca.indices) {
             var c = ca[i]
             while (c[0] == ' ') {
@@ -79,10 +79,11 @@ object LocalSession {
             inMemorySession["$componentIdentifier${key.name}"] as? T?
         } else {
             val serializedValue = getCookie(key.name, componentIdentifier)
-            console.log("serializedValue", serializedValue)
-            if (serializedValue.isNotBlank())
+            console.log("serializedValue", serializedValue, context)
+            val a = if (serializedValue.isNotBlank())
                 context.defaultJson.decodeFromString<T>(serializedValue)
             else null
+            a
         }
     }
     // DEIREADH : For a component's session

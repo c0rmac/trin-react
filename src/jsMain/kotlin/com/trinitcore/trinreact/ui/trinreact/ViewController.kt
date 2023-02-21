@@ -12,6 +12,7 @@ import styled.css
 import styled.styledDiv
 import styled.styledH3
 import kotlinx.browser.window
+import org.w3c.dom.url.URL
 
 interface ViewControllerProps : TProps {
 }
@@ -49,7 +50,6 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
 
     /** Managed Controller's Delegate - Post transition animation between ViewControllers call. */
     open fun didChangeViewController() {
-        console.log("didChangeViewController")
         app.setPageTitle(pageTitle)
         if (useToolbar) {
             showToolbar()
@@ -88,7 +88,7 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
 
     /** App context */
     val appContext: Context
-    get() = props.appContext
+    get() = props.appContext ?: throw IllegalStateException("Context is not loaded.")
 
     /** App container */
     val app: App
@@ -133,15 +133,11 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
 
     override fun componentWillReceiveProps(nextProps: P) {
         if (this.managedController) {
-            console.log("componentWillReceiveProps", 1)
             if (shouldChangeParameters(nextProps)) {
-                console.log("componentWillReceiveProps", 2)
                 this.willChangeParameters(nextProps)
                 this.setState({ it }, {
-                    console.log("componentWillReceiveProps", 3)
                     this.didChangeParameters(nextProps)
                     window.setTimeout({
-                        console.log("componentWillReceiveProps", 4)
                         if (!usingCustomToolbar) app.showToolbarTitle()
                     }, 200)
                 })
@@ -155,6 +151,12 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
     constructor(props: P) : super(props) {
     }
     // DEIREADH : INITIALISATION
+
+    fun getParameter(key: String): String? {
+        val urlString = window.location.href
+        val url = URL(urlString);
+        return url.searchParams.get(key)
+    }
 
     // TUS : Toolbar
     // TUS : DEFAULT
@@ -192,16 +194,17 @@ abstract class ViewController<P : ViewControllerProps, S : ViewControllerState, 
     // DEIREADH : DEFAULT
 
     // TUS : ADJUSTER
-    var title: String? = text.title
+    private var _title: String? = null
+    var title: String?
+    get() = _title ?: text.title
         set(value){
-            field = value
+            _title = value
             app.setPageTitle(pageTitle)
             //showToolbar()
         }
     // DEIREADH : ADJUSTER
 
     fun showToolbar() {
-        console.log("showToolbar")
         if (this@ViewController.toolbar != null) {
             app.useToolbar(this@ViewController.toolbar!!)
         } else {

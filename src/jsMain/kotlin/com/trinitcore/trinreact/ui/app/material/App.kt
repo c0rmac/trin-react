@@ -467,7 +467,11 @@ class App : RComponent<AppProps, AppState>() {
                             props.innerComponentAdapter?.drawerItems?.forEach { drawerItem ->
                                 mListItem(
                                     primaryText = drawerItem.title,
-                                    onClick = { ViewController.visibleInstance.go(to = drawerItem.link); hideDrawer() }
+                                    onClick = {
+                                        if (drawerItem.link != null) ViewController.visibleInstance.go(to = drawerItem.link);
+                                        drawerItem.action?.invoke()
+                                        hideDrawer()
+                                    }
                                 )
                             }
                         }

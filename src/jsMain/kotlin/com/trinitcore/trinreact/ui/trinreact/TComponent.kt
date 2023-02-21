@@ -59,21 +59,21 @@ abstract class TComponent<P : TProps, S : TState> : RComponent<P, S> {
     // TUS : SESSION
     // TUS : For this component's session
     inline fun <reified T>setSessionAttr(key: Enum<*>, value: T?) {
-        LocalSession.setSessionAttrForComp(props.appContext, componentIdentifier, key, value)
+        props.appContext?.let { appContext -> LocalSession.setSessionAttrForComp(appContext, componentIdentifier, key, value) }
     }
 
     inline fun <reified T>getSessionAttr(key: Enum<*>): T? {
-        return LocalSession.getSessionAttrForComp(props.appContext, componentIdentifier, key)
+        return props.appContext?.let { appContext -> LocalSession.getSessionAttrForComp(appContext, componentIdentifier, key) }
     }
     // DEIREADH : For this component's session
 
     // TUS : For the global session
     inline fun <reified T>setGlobalSessionAttr(key: Enum<*>, value: T?) {
-        LocalSession.setSessionAttrForComp(props.appContext, App.componentIdentifier, key, value)
+        props.appContext?.let { appContext -> LocalSession.setSessionAttrForComp(appContext, App.componentIdentifier, key, value) }
     }
 
     inline fun <reified T>getGlobalSessionAttr(key: Enum<*>): T? {
-        return LocalSession.getSessionAttrForComp(props.appContext, App.componentIdentifier, key)
+        return props.appContext?.let { appContext -> LocalSession.getSessionAttrForComp(appContext, App.componentIdentifier, key) }
     }
     // DEIREADH : For the global session
     // DEIREADH : SESSION
@@ -112,7 +112,7 @@ abstract class TComponent<P : TProps, S : TState> : RComponent<P, S> {
                 block()
             } catch (e: Exception) {
                 if (e is UnauthorisedRESTException) {
-                    ViewController.visibleInstance.go(to = props.appContext.unauthorisedRedirect)
+                    props.appContext?.unauthorisedRedirect?.let { unauthorisedRedirect -> ViewController.visibleInstance.go(to = unauthorisedRedirect) }
                 } else if (e is RESTException) {
                     if (e is InternalServerRESTException || e is InternalClientRESTException)
                         console.error(e)

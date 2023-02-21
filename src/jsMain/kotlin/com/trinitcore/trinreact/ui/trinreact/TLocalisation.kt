@@ -8,9 +8,10 @@ import kotlin.reflect.KClass
 
 object TLocalisationFactory {
 
-    fun <T : TComponentLocalisation>from(kClass: KClass<out TComponentLocalisation>): T {
+    fun <T : TComponentLocalisation>from(kClass: KClass<out TComponentLocalisation>, preferredLanguage: Language? = null): T {
+        console.log("preferredLanguage", preferredLanguage)
         val localisedComp = kClass.js.newInstance()
-        return when (language) {
+        return when (preferredLanguage ?: language) {
             Language.EN -> localisedComp.en
             Language.GA -> localisedComp.ga
             Language.ES -> localisedComp.es ?: localisedComp.en

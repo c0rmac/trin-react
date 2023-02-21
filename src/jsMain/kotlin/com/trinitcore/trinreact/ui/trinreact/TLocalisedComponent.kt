@@ -12,8 +12,24 @@ abstract class TLocalisedComponent<P : TProps, S : TState, R : TComponentLocalis
 
     abstract val localisation: KClass<R>
 
+    enum class TSession {LANGUAGE}
+
+    private var _text: R? = null
     val text: R
-    get() = TLocalisationFactory.from(localisation)
+    get() {
+        val a = _text ?: createLocalisationFrom(localisation)
+        if (_text == null) {
+            _text = a
+        }
+        return a
+    }
+
+    fun <T : TComponentLocalisation>createLocalisationFrom(localisation: KClass<out T>): T {
+        return TLocalisationFactory.from(
+            localisation,
+            props?.appContext?.let { appContext -> LocalSession.getGlobalSessionAttr(appContext, TSession.LANGUAGE) }
+        )
+    }
 
     open class Style(componentIdentifier: String)
         : TComponent.Style(componentIdentifier)
